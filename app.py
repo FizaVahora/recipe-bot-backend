@@ -15,7 +15,7 @@ def webhook():
     
     # Format for model input
     prompt = f"ingredienti: {ingredients}\nricetta:"
-    result = generator(prompt, max_length=200, do_sample=True)[0]['generated_text']
+    result = generator(prompt, max_length=100, do_sample=True)[0]['generated_text']
     
     recipe = result.split("ricetta:")[-1].strip()
 
