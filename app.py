@@ -3,26 +3,22 @@ from transformers import pipeline
 
 app = Flask(__name__)
 
-# Load the Hugging Face model
-generator = pipeline("text-generation", model="paola-md/light-recipes-italian")
+# Load the recipe generation model (lightweight and recipe-specific)
+generator = pipeline("text2text-generation", model="flax-community/t5-recipe-generation")
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json()
-    
-    # Try to get ingredients from Dialogflow request
-    ingredients = req['queryResult']['queryText']
-    
-    # Format for model input
-    prompt = f"ingredienti: {ingredients}\nricetta:"
-    
-    # Reduce the max_length to 100 for less memory usage
-    result = generator(prompt, max_length=100, do_sample=True)[0]['generated_text']
-    
-    recipe = result.split("ricetta:")[-1].strip()
 
-    return jsonify({'fulfillmentText': recipe})
+    # Extract ingredients from Dialogflow query
+    ingredients = req['queryResult']['queryText']
+
+    # Generate recipe using the model
+    result = generator(ingredients, max_length=150)[0]['generated_text']
+
+    return jsonify({'fulfillmentText': result})
 
 if __name__ == '__main__':
     app.run(port=5000)
+
 
