@@ -15,7 +15,9 @@ def webhook():
     
     # Format for model input
     prompt = f"ingredienti: {ingredients}\nricetta:"
-    result = generator(prompt, max_length=200, do_sample=True)[0]['generated_text']
+    
+    # Reduce the max_length to 100 for less memory usage
+    result = generator(prompt, max_length=100, do_sample=True)[0]['generated_text']
     
     recipe = result.split("ricetta:")[-1].strip()
 
@@ -23,3 +25,4 @@ def webhook():
 
 if __name__ == '__main__':
     app.run(port=5000)
+
